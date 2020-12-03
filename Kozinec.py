@@ -74,15 +74,21 @@ X_3 = [
     [0.23046293495668924, -0.013246417684656153]
   ] 
 # Вероятность того, что вектор належить розподілу
-teta = 0.8
-
+teta = 0.9
+def is_pos_def(x):# положительная определенность матрицы
+    return np.all(np.linalg.eigvals(x) > 0)
 E = np.array([[1,0],[0,1]])# Дисперсия
+E1 = np.array([[-1,0],[0,-1]])
 A = np.linalg.inv(E) 
 print ("E = \n",A)
 m = np.array([0,0])# мат ожидание
 print ("m = ",m)
 k = 2*log(teta) + m.dot(A.dot(m)) # константа
 print ("k = ",k)
+print ("E = \n", E)
+print ("E1 = \n", E1)
+print("E = ", is_pos_def(E))
+print ("E1 = ", is_pos_def(E1))
 #v_1 = np.array([1,0]) # собственный вектор
 #искривля пространство, получаем кси от х и L от A,m,k
 def ksi(x):
@@ -194,57 +200,59 @@ def Search_Kozinec(X, L):
     if np.dot(L,ksi_) < 0: Mark.append(0)
     else: Mark.append(1)
   return Mark
-L = L (A,m,k)
-L = Kozinec(L, X_1, X_2,0)
-print ("\nL = ", L)
 
-print ("Lesson 1")
-Mark_1 = Search_Kozinec(X_1, L)
-Mark_2 = Search_Kozinec(X_2, L)
-Mark_3 = Search_Kozinec(X_3, L)
-print ("\nMark_1 = ", Mark_1)
-print ("\nMark_2 = ", Mark_2)
-print ("\nMark_3 = ", Mark_3)
-L = Kozinec(L, X_1, X_2,0)
-print ("\nL = ", L)
-#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-print ("Lesson 2")
-L = Kozinec(L, X_1, X_2,0)
-Mark_1 = Search_Kozinec(X_1, L)
-Mark_2 = Search_Kozinec(X_2, L)
-Mark_3 = Search_Kozinec(X_3, L)
-print ("\nMark_1 = ", Mark_1)
-print ("\nMark_2 = ", Mark_2)
-print ("\nMark_3 = ", Mark_3)
-print ("\nL = ", L)
-#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-print ("Lesson 3")
-L = Kozinec(L, X_1, X_2,0)
-Mark_1 = Search_Kozinec(X_1, L)
-Mark_2 = Search_Kozinec(X_2, L)
-Mark_3 = Search_Kozinec(X_3, L)
-print ("\nMark_1 = ", Mark_1)
-print ("\nMark_2 = ", Mark_2)
-print ("\nMark_3 = ", Mark_3)
-print ("\nL = ", L)
-#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-print ("Lesson 4")
-L = Kozinec(L, X_1, X_2,0)
-Mark_1 = Search_Kozinec(X_1, L)
-Mark_2 = Search_Kozinec(X_2, L)
-Mark_3 = Search_Kozinec(X_3, L)
-print ("\nMark_1 = ", Mark_1)
-print ("\nMark_2 = ", Mark_2)
-print ("\nMark_3 = ", Mark_3)
-print ("\nL = ", L)
 
-# print ("\nL1= ", L1)
-# print ("\nL2 = ", L2)
-# print ("\nL_final = ", L)
 
+if is_pos_def(A):
+  L = L (A,m,k)
+  L = Kozinec(L, X_1, X_2,0)
+  print ("\nL = ", L)
+
+  print ("Lesson 1")
+  Mark_1 = Search_Kozinec(X_1, L)
+  Mark_2 = Search_Kozinec(X_2, L)
+  Mark_3 = Search_Kozinec(X_3, L)
+  print ("\nMark_1 = ", Mark_1)
+  print ("\nMark_2 = ", Mark_2)
+  print ("\nMark_3 = ", Mark_3)
+  L = Kozinec(L, X_1, X_2,0)
+  print ("\nL = ", L)
+  #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  print ("Lesson 2")
+  L = Kozinec(L, X_1, X_2,0)
+  Mark_1 = Search_Kozinec(X_1, L)
+  Mark_2 = Search_Kozinec(X_2, L)
+  Mark_3 = Search_Kozinec(X_3, L)
+  print ("\nMark_1 = ", Mark_1)
+  print ("\nMark_2 = ", Mark_2)
+  print ("\nMark_3 = ", Mark_3)
+  print ("\nL = ", L)
+  #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  print ("Lesson 3")
+  L = Kozinec(L, X_1, X_2,0)
+  Mark_1 = Search_Kozinec(X_1, L)
+  Mark_2 = Search_Kozinec(X_2, L)
+  Mark_3 = Search_Kozinec(X_3, L)
+  print ("\nMark_1 = ", Mark_1)
+  print ("\nMark_2 = ", Mark_2)
+  print ("\nMark_3 = ", Mark_3)
+  print ("\nL = ", L)
+  #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  print ("Lesson 4")
+  L = Kozinec(L, X_1, X_2,0)
+  Mark_1 = Search_Kozinec(X_1, L)
+  Mark_2 = Search_Kozinec(X_2, L)
+  Mark_3 = Search_Kozinec(X_3, L)
+  print ("\nMark_1 = ", Mark_1)
+  print ("\nMark_2 = ", Mark_2)
+  print ("\nMark_3 = ", Mark_3)
+  print ("\nL = ", L)
+
+  # print ("\nL1= ", L1)
+  # print ("\nL2 = ", L2)
+  # print ("\nL_final = ", L)
+else: print ("Матрица не положительно определена")
 
 if __name__ == "__main__":
   import doctest
   doctest.testmod()
-
-
