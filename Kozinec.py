@@ -1,43 +1,34 @@
 import numpy as np
 from math  import log, sqrt
 from numpy import linalg
+# def my_dot_1 (v,A):
+#   C = []
+#   for j in range(len(A)):
+#     C.append([])
+#     for i in range(len(A)):
+#       C[j].append(A[j][i]*v[i])
+#   return np.array(C)
+# def my_dot_2 (v,A):
+#   C = []
+#   for i in range(len(A)):
+#     C.append([])
+#     for j in range(len(A)):
+#       C[i].append(A[j][i]*v[j])
+#   return np.array(C)
+
 #Обучающие выборки
 X_1 = np.array([
     [0.7295200749361322, 0.7286337326606256],
     [0.826505923560258, 0.9403158114766519],
     [0.6023139955320228, 0.4890999051968531],
     [0.7924301535257385, 0.9724603339895345],
-    [0.3739062132424882, 0.3807945141554343],
-    [0.5213825315815278, 0.7011647516840395],
-    [0.5799489554848042, 0.860210492806848],
-    [0.4472712889659769, 0.23208680582951224],
-    [0.8266928088733442, 0.9708616047497776],
-    [0.2096090384196102, 0.07948946448504302],
-    [0.33832612728389067, 0.4113630733104253],
-    [0.68383264433507, 0.9003136248995234],
-    [0.26193673674112883, 0.20727182114712916],
-    [0.3974079484193441, 0.44643242592599985]
-  ])
+    [0.3739062132424882, 0.3807945141554343]
+    ])
 X_2 = np.array([
-    [0.6721751810634596, 0.18449311250437642],
-    [-0.042169919316812694, 0.49680717330122753],
     [0.036908766218045196, 0.23196814194239498],
     [-0.18516646555268645, -0.16324434635897248],
     [0.19909138385183697, -0.20702094026594725],
-    [-0.2623894406811841, 0.4468810030788092],
-    [0.619550362174564, 0.03980697858179339],
-    [0.4418628679007078, -0.0039497588794656585],
-    [0.2802286875966722, -0.3525718017732991],
-    [0.07448927922989906, -0.4973644925498143],
-    [0.6422888179711995, -0.0035410965993326157],
-    [0.039664220315716536, 0.34884886593497205],
-    [0.4825251758452453, 0.5597992922297098],
-    [-0.12480141590985117, 0.3639607311580515],
-    [0.45864564291438903, 0.5039088481769888],
-    [0.4953345038557703, 0.29819697998837763],
-    [0.2106700620743459, -0.2647756656167547],
-    [-0.16518914904666915, 0.31212217489262595],
-    [0.23046293495668924, -0.013246417684656153]
+    [0.2802286875966722, -0.3525718017732991]
   ])
 X_3 = np.array([
     [0.8281937591326639, -0.48370952458304206],
@@ -59,8 +50,16 @@ X_3 = np.array([
     [0.8297187116097032, -0.19949614828904294],
     [-0.7881099342086356, 0.5319196165347493],
     [-0.6965345338796621, 0.034560747319591745],
-    [-0.5844695109910769, 0.8287781873912904]
+    [-0.5844695109910769, 0.8287781873912904],
+    [0.19909138385183697, -0.20702094026594725],
+    [0.2802286875966722, -0.3525718017732991]
   ] )
+Mark_1 = []
+Mark_2 = []
+Mark_3 = []
+Old_Mark_1 = []
+Old_Mark_2 = []
+Old_Mark_3 = []
 # Вероятность того, что вектор належить розподілу
 teta = 0.9
 def is_pos_def(x):# положительная определенность матрицы
@@ -141,27 +140,36 @@ def L_to_D (L):
   A = np.array(A)
   #print("A = \n",A)
   return A
-def start(L,A,X_1,X_2,X_3,k):
-  if k > 490: return L
-  elif is_pos_def(A):
-    L = Kozinec(L, X_1,1)
-    L = Kozinec(L, -X_2, -1)
-    #print ("\nL = ", L)
+def start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,k):
+  L = Kozinec(L, X_1,1)
+  L = Kozinec(L,-X_2,-1)
+  #print ("\nL = ", L)
 
-    #print ("Lesson 1")
-    Mark_1 = Search_Kozinec(X_1, L)
-    Mark_2 = Search_Kozinec(X_2, L)
-    Mark_3 = Search_Kozinec(X_3, L)
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print ("\nMark_1 = ", Mark_1)
-    print ("\nMark_2 = ", Mark_2)
-    print ("\nMark_3 = ", Mark_3)
-    A = L_to_D (L)
-    if is_pos_def(A) != 1: start(L,A,X_1,X_2,X_3,k+1)
+  #print ("Lesson 1")
+  if k > 0:
+    Old_Mark_1 = Mark_1
+    Old_Mark_2 = Mark_2
+    Old_Mark_3 = Mark_3
+
+  Mark_1 = Search_Kozinec(X_1, L)
+  Mark_2 = Search_Kozinec(X_2, L)
+  Mark_3 = Search_Kozinec(X_3, L)
+  print ("\nMark_1 = ", Mark_1)
+  print ("\nMark_2 = ", Mark_2)
+  print ("\nMark_3 = ", Mark_3)
+  if k > 0 and Old_Mark_1 == Mark_1 and Old_Mark_2 == Mark_2 and Old_Mark_3 == Mark_3: 
+    print("STOP cause nothing new")
+    return L
+  print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  A = L_to_D (L)
+  if k > 490: 
+    print ("STOP")
+    return L
+  if is_pos_def(A) == 1:
     for i in range (len(Mark_1)):
       for j in range (len(Mark_2)):
-        if Mark_1[i] == 0 or Mark_2[j] == 1 : return  start(L,A,X_1,X_2,X_3,k+1)
-  else: 
+        if Mark_1[i] == 0 or Mark_2[j] == 1 : return  start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3, k+1)
+  if is_pos_def(A) == 0:
     print ("Матрица не положительно определена")
     print(A)
     Z = []
@@ -170,25 +178,36 @@ def start(L,A,X_1,X_2,X_3,k):
     mask = np.logical_and(w<0,w<0)
     #print(mask)
     for i in range (len(v)):
-      if mask[i] : Z.append(v[i])
+      if mask[i] == False: 
+        Z.append(v[i])
+        print("####")
+        print("v[",i,"] = ",v[i])
+        #A = my_dot_1 (v[i],A)
+        #A = my_dot_2 (v[i],A)
+        #A = A.dot(v[i].transpose())
     Z = np.array(Z)
+    #Kozinec(L,Z,1)
+    #print ("A &", is_pos_def(A))
     #print ("Z =\n",Z)
     #print ("X_1 =\n",X_1)
-    X_1 = np.concatenate([X_1,Z],axis = 0)
+    X_2 = np.concatenate([X_1,Z],axis = 0)
+    #print("X_1=",X_1)
     #print ("X_1 =\n",len(X_1))
     #print ("Z =\n",X_3)
-    E = np.array([[1,0],[0,1]])# Дисперсия
-    A = np.linalg.inv(E) 
+    #E = np.array([[1,0],[0,1]])# Дисперсия
+    #A = np.linalg.inv(E) 
     # m = np.array([0,0])# мат ожидание
     # k = 2*log(teta) + m.dot(A.dot(m)) # константа
-    start(L,A,X_1,X_2,X_3,k+1)
-
+    start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3, k+1)
+  else: return L
 
 L = L (A,m,k)
 C = L
-start(L,A,X_1,X_2,X_3,0)
+L = start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,0)
+# L = start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_1,Old_Mark_10)
+# L = start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_1,Old_Mark_10)
 
 
-# if __name__ == "__main__":
-#   import doctest
-#   doctest.testmod()
+if __name__ == "__main__":
+  import doctest
+  doctest.testmod()
