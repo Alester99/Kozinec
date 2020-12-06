@@ -1073,7 +1073,7 @@ def ksi(x):
   """
   ksi = []
   n = len(x)
-  if len (x) != 2: return print (x)
+ # if len (x) != 2: return print (x)
   for j in range (0,2*n):
     for i in range(0,n):
       #print(i+n*j,n*n)
@@ -1082,6 +1082,18 @@ def ksi(x):
   ksi.append(1) 
   #print ("ksi(x) = ", ksi)
   return np.array(ksi)
+def eta(x):
+  eta = []
+  n = len(x)
+ # if len (x) != 2: return print (x)
+  for j in range (0,2*n):
+    for i in range(0,n):
+      #print(i+n*j,n*n)
+      if i+n*j < n*n: eta.append(x[i]*x[j])#, print (x[i]*x[j])
+      else: eta.append(0) #, eta.append(x[j - n])
+  eta.append(0) 
+  #print ("eta(x) = ", eta)
+  return np.array(eta)
 
 def L (A,m,k):
   """
@@ -1133,7 +1145,7 @@ def L_to_D (L):
   #print("A = \n",A)
   return A
 def start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,k):
-  L = Kozinec(L,-X_2,-1) # если поменять местами, программа стремиться занулить при большом количестве данных
+  L = Kozinec(L,X_2,-1) # если поменять местами, программа стремиться занулить при большом количестве данных
   L = Kozinec(L, X_1,1)
   #print ("\nL = ", L)
 
@@ -1172,9 +1184,12 @@ def start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,
     for i in range (len(v)):
       if mask[i] == False: 
         X_2 = np.vstack((X_2,v[i]))
+        ksi_ = eta(v[i])
+        Gamma= np.array(max((np.dot(-ksi_,L-ksi_))/(np.dot((L-ksi_),(L-ksi_))),0))
+        L = np.array(L*Gamma + (1 - Gamma)*ksi_)
         #Z.append(v[i])
-        print("####")
-        print("v[",i,"] = ",v[i])
+        #print("####")
+        #print("v[",i,"] = ",v[i])
     #Z = np.array(Z)
     #print("X_2 = ",len(X_2))
     #X_2 = newmas (X_2,Z)
