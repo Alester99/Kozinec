@@ -1147,7 +1147,7 @@ def L_to_D (L):
 def Kozinec_positive_definite (L,X_2):
   A = L_to_D (L)
   if is_pos_def(A) == 0:
-    print ("Матрица не положительно определена")
+    #print ("Матрица не положительно определена")
     #print(A)
     w,v = linalg.eig(A)
     #print(w,v)
@@ -1166,15 +1166,15 @@ def Kozinec_positive_definite (L,X_2):
     #print("X_2 = ",len(X_2))
     #X_2 = newmas (X_2,Z)
     #print("X_2 = ",len(X_2))
-    print ("SUCSESS")
-    print(L)
+    #print(L)
     return L
+  else: return L
 
 def start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,k):
   L = Kozinec(L,X_2,-1) # если поменять местами, программа стремиться занулить при большом количестве данных
   L = Kozinec(L, X_1,1)
-  #L = Kozinec_positive_definite (L,X_2)
-
+  #print ("SUCSESS")
+  L = Kozinec_positive_definite (L,X_2)
   Mark_1 = Search_Kozinec(X_1, L)
   Mark_2 = Search_Kozinec(X_2, L)
   Mark_3 = Search_Kozinec(X_3, L)
@@ -1183,8 +1183,9 @@ def start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,
     print ("STOP")
     return L
   for i in range (len(Mark_1)):
-    for j in range (len(Mark_2)):
-      if Mark_1[i] == 0 or Mark_2[j] == 1: return  start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3, k+1) 
+    if Mark_1[i] == 0: return  start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3, k+1) 
+  for j in range (len(Mark_2)):
+    if Mark_2[j] == 1: return  start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3, k+1) 
   print("k = ",k,"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
   print ("\nMark_1 = ", Mark_1)
   print ("\nMark_2 = ", Mark_2)
