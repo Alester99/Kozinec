@@ -1041,7 +1041,7 @@ def newmas (X,Z):
   C = np.vstack((X,Z))
   return np.array(C)
 # Вероятность того, что вектор належить розподілу
-teta = 0.9
+teta = 1
 def skalar (L,ksi):
   SUM = 0
   #print ("L = ",len(L))
@@ -1144,39 +1144,11 @@ def L_to_D (L):
   A = np.array(A)
   #print("A = \n",A)
   return A
-def start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,k):
-  L = Kozinec(L,X_2,-1) # если поменять местами, программа стремиться занулить при большом количестве данных
-  L = Kozinec(L, X_1,1)
-  #print ("\nL = ", L)
-
-  #print ("Lesson 1")
-  if k > 0:
-    Old_Mark_1 = Mark_1
-    Old_Mark_2 = Mark_2
-    Old_Mark_3 = Mark_3
-
-  Mark_1 = Search_Kozinec(X_1, L)
-  Mark_2 = Search_Kozinec(X_2, L)
-  Mark_3 = Search_Kozinec(X_3, L)
-  print ("\nMark_1 = ", Mark_1)
-  print ("\nMark_2 = ", Mark_2)
-  print ("\nMark_3 = ", Mark_3)
-  print("k = ",k,"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-  if k > 0 and Old_Mark_1 == Mark_1 and Old_Mark_2 == Mark_2 and Old_Mark_3 == Mark_3: 
-    print("STOP cause nothing new")
-    return L
+def Kozinec_positive_definite (L,X_2):
   A = L_to_D (L)
-  if k > 490: 
-    print ("STOP")
-    return L
-  if is_pos_def(A) == 1:
-    for i in range (len(Mark_1)):
-      for j in range (len(Mark_2)):
-        if Mark_1[i] == 0 or Mark_2[j] == 1: return  start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3, k+1) 
   if is_pos_def(A) == 0:
     print ("Матрица не положительно определена")
-    print(A)
-    Z = []
+    #print(A)
     w,v = linalg.eig(A)
     #print(w,v)
     mask = np.logical_and(w<0,w<0)
@@ -1184,7 +1156,7 @@ def start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,
     for i in range (len(v)):
       if mask[i] == False: 
         X_2 = np.vstack((X_2,v[i]))
-        ksi_ = eta(v[i])
+        ksi_ = -eta(v[i])
         Gamma= np.array(max((np.dot(-ksi_,L-ksi_))/(np.dot((L-ksi_),(L-ksi_))),0))
         L = np.array(L*Gamma + (1 - Gamma)*ksi_)
         #Z.append(v[i])
@@ -1194,9 +1166,41 @@ def start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,
     #print("X_2 = ",len(X_2))
     #X_2 = newmas (X_2,Z)
     #print("X_2 = ",len(X_2))
-    #print ("SUCSESS")
-    start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3, k+1)
+    print ("SUCSESS")
+    print(L)
+    return L
 
+def start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,k):
+  L = Kozinec(L,X_2,-1) # если поменять местами, программа стремиться занулить при большом количестве данных
+  L = Kozinec(L, X_1,1)
+  #L = Kozinec_positive_definite (L,X_2)
+
+  Mark_1 = Search_Kozinec(X_1, L)
+  Mark_2 = Search_Kozinec(X_2, L)
+  Mark_3 = Search_Kozinec(X_3, L)
+  #print ("\nL = ", L)
+  if k > 490: 
+    print ("STOP")
+    return L
+  for i in range (len(Mark_1)):
+    for j in range (len(Mark_2)):
+      if Mark_1[i] == 0 or Mark_2[j] == 1: return  start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3, k+1) 
+  print("k = ",k,"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  print ("\nMark_1 = ", Mark_1)
+  print ("\nMark_2 = ", Mark_2)
+  print ("\nMark_3 = ", Mark_3)
+  return L
+  #print ("Lesson 1")
+  # if k > 0:
+  #   Old_Mark_1 = Mark_1
+  #   Old_Mark_2 = Mark_2
+  #   Old_Mark_3 = Mark_3
+
+  # print("k = ",k,"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  # if k > 0 and Old_Mark_1 == Mark_1 and Old_Mark_2 == Mark_2 and Old_Mark_3 == Mark_3: 
+  #   print("STOP cause nothing new")
+  #   return L
+  #start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3, k+1)
 L = L (A,m,k)
 C = L
 L = start(L,A,X_1,X_2,X_3,Old_Mark_1,Old_Mark_2,Old_Mark_3,Mark_1,Mark_2,Mark_3,0)
